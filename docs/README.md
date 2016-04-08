@@ -12,7 +12,11 @@
 **Milestones**: Ensuring proper formatting of the csv with image uploads. Finding an efficient method of creating tasks and determining how often new tasks should be created since we can’t dynamically add rows to a task’s csv.
 
 ##Quality Control (3)
-**Idea**: Workers are required to submit a comment detailing why they chose one mockup over the other. This will serve as a quality control measure since it will at the very least make workers stop and think. It will also be easy for us to identify if a comment is complete garbage or actually makes sense. We will also be mixing in random gold standard tasks into our csv that we create. For these, one mockup will be clearly better than the other so that it is obvious when a worker is clicking randomly and chooses the poorer mockup in our gold standard.
+**Idea**: Three main features of the module. 
+
+1) We will be mixing in random gold standard tasks into our csv that we create. For these, one mockup will be clearly better than the other so that it is obvious when a worker is clicking randomly and chooses the poorer mockup in our gold standard.
+2) Workers will be required to submit a comment detailing why they chose one mockup over the other. This will serve as a quality control measure since it will at the very least make workers stop and think. 
+3) To determine whether the comments are useful, and to provide the most useful comments back to the designer, we will create a new task which has images with the previously submitted comments. Workers will be required to rate how relevant and helpful each comment is on a scale of 1-5, and 0 if it is gibberish or makes no sense. 
 
 **Milestones**: Creating gold standard tasks. Writing script to identify if a comment is garbage or comprehensible.
 
