@@ -1,0 +1,5 @@
+*.pyc
+venv
+*.psd
+.DS_Store
+app/config.py
