@@ -17,6 +17,7 @@ login_manager.init_app(app)
 class Challenges(db.Model):
 	__tablename__ = 'challenges'
 	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(200))
 	
 	def __init__(self, id):
 		self.id = id
@@ -46,7 +47,8 @@ class DbUser(object):
 # APP ROUTES ######################################################################
 @app.route('/')
 def index():
-	return render_template('index.html')
+	challenge = Challenges.query.filter_by(name='Test').first()
+	return render_template('index.html', name = challenge.id)
 
 if __name__ == '__main__':
-	app.run()
+	app.run(debug=True)
