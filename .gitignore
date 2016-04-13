@@ -2,3 +2,4 @@
 venv
 *.psd
 .DS_Store
+config.py
