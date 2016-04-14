@@ -5,8 +5,9 @@ DEBUG = False
 
 SECRET_KEY = 'SecretKeyForSessionSigning'
 
-password = 'nets213ccb'
-uri =  'mysql://admin:%s@nets213ccb.cxh68dehnct7.us-east-1.rds.amazonaws.com/nets213ccb' %(password)
+username = 'bf195be856ac10'
+password = 'fc75324d'
+uri =  'mysql://%s:%s@us-cdbr-iron-east-03.cleardb.net/heroku_8020c01508c5dac' % (username, password)
 SQLALCHEMY_DATABASE_URI = uri
 DATABASE_CONNECT_OPTIONS = {}
 
