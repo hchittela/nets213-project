@@ -47,8 +47,8 @@ class DbUser(object):
 # APP ROUTES ######################################################################
 @app.route('/')
 def index():
-	challenge = Challenges.query.filter_by(name='Test').first()
-	return render_template('index.html', name = challenge.id)
+	# challenge = Challenges.query.filter_by(name='Test').first()
+	return render_template('index.html', name = "Test")
 
 if __name__ == '__main__':
 	app.run(debug=True)
