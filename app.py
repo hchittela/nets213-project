@@ -79,8 +79,11 @@ def load_user(user_id):
 # APP ROUTES ######################################################################
 @app.route('/')
 def index():
-	challenge = Challenges.query.filter_by(name='Test').first()
-	return render_template('index.html', name = challenge.id)
+	return render_template('index.html')
+
+@app.route('/signup')
+def signup():
+  return render_template('signup.html')
 
 if __name__ == '__main__':
 	app.run(debug=True)
