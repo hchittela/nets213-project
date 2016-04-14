@@ -1,0 +1,149 @@
+/*Nav Bar Stuff*/
+
+.navbar-default {
+	position: relative;
+	height: 57px;
+	top: -1px;
+	background: #EE5EA2; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(left, #EE5EA2 , #32CBFD); /* For Safari 5.1 to 6.0 */
+ 	background: -o-linear-gradient(right, #EE5EA2, #32CBFD); /* For Opera 11.1 to 12.0 */
+ 	background: -moz-linear-gradient(right, #EE5EA2, #32CBFD); /* For Firefox 3.6 to 15 */
+  	background: linear-gradient(to right, #EE5EA2, #32CBFD); /* Standard syntax */
+}
+
+#logo-header a {
+	color: white;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 700;
+	font-size: 40px;
+}
+
+#bs-example-navbar-collapse-1 a{
+	color: white;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 400;
+}
+
+#bs-example-navbar-collapse-1 a:hover{
+	border-bottom: 5px solid #EE5EA2;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+}
+
+/*Unique CSS for Responses Page (with the Thumbnails)*/
+
+.responses {
+	padding-top: 40px;
+	padding-bottom: 40px;
+	text-align: center;
+}
+
+.responses img {
+  width: 563px;
+  height: auto;
+}
+
+.responses p {
+	text-align: center;
+}
+
+.responses a {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+	font-size: 17px;
+	color: #6f78c3;
+}
+
+.responses a:hover, .responses .img-responsive:hover {
+	text-decoration: none;
+	color: #2d336c;
+	border-color: #808080;
+}
+
+/*Unique CSS for Response Page*/
+
+h1 {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 700;
+	font-size: 30px;
+	color: #5C5C5C;
+}
+
+.upload h1 {
+	font-size: 27px;
+}
+
+.results-title h1 {
+	text-align: center;
+}
+
+.response {
+	text-align: center;
+}
+
+.response img {
+	width: 400px; 
+	height: auto;
+}
+
+.logo img {
+	width:35px; 
+	height:auto;
+	position: relative;
+	top: -8px;
+	left: -5px;
+}
+
+.form-control {
+  background-color: rgb(240,240,240);
+  /*color: rgb(142, 142, 142);*/
+  color: black;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+  border-color: rgb(168, 168, 168);
+}
+
+.option-a .form-control::-webkit-input-placeholder { color: rgb(244, 119, 175); }
+.option-a .form-control:-moz-placeholder { color: rgb(244, 119, 175); }
+.option-a .form-control::-moz-placeholder { color: rgb(244, 119, 175); }
+.option-a .form-control:-ms-input-placeholder { color: rgb(244, 119, 175); }
+
+.option-b .form-control::-webkit-input-placeholder { color: rgb(56, 213, 254); }
+.option-b .form-control:-moz-placeholder { color: rgb(56, 213, 254); }
+.option-b .form-control::-moz-placeholder { color: rgb(56, 213, 254); }
+.option-b .form-control:-ms-input-placeholder { color: rgb(56, 213, 254); }
+
+h3 {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 400;
+	font-size: 15px;
+	color: #5C5C5C;
+}
+
+.dropdown-toggle {
+	background-color: rgb(240,240,240);
+	color: black;
+	font-weight: 100;
+	border-color: rgb(168, 168, 168);
+	font-size: 15px;
+}
+
+.dropdown-toggle.btn-primary, .dropdown-toggle:hover, .dropdown-toggle:active, .dropdown-toggle:focus, .open>.dropdown-toggle.btn-primary:focus, .open>.dropdown-toggle.btn-primary:hover,
+.btn-primary.active, .btn-primary:active, .open>.dropdown-toggle.btn-primary, .btn-primary:focus{
+	background-color: rgb(240,240,240);
+	color: black;
+	font-weight: 100;
+	border-color: rgb(168, 168, 168);
+	font-size: 15px;
+}
+
+.dropdown-menu li a{
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	font-size: 15px;
+}
+
+.upload-btn {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+}
