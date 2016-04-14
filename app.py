@@ -29,33 +29,18 @@ class Challenges(db.Model):
 	def __init__(self, id):
 		self.id = id
 
-class DbUser(object):
-	def __init__(self, user, userid, urole):
-		self.user = user
-		self.userid = userid
-		self.role = urole
-		self.error = ''
-	def get_id(self):
-		return unicode(self.userid)
-
-	def is_active(self):
-		return True
-
-	def is_anonymous(self):
-		return False
-
-	def is_authenticated(self):
-		return True
-
-	def get_role(self):
-		return self.role
-
 class User(db.Model):
     __tablename__ = 'users'
-
     email = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
+    name = db.Column(db.String)
     authenticated = db.Column(db.Boolean, default=False)
+
+    def __init__(self, email, password, name, authenticated):
+		self.email = email
+		self.password = password
+		self.name = name
+		self.authenticated = authenticated
 
     def is_active(self):
         return True
@@ -73,7 +58,7 @@ class User(db.Model):
 # USER LOADER #####################################################################
 @login_manager.user_loader
 def load_user(user_id):
-	return User.get(user_id)
+	return User.query.get(user_id)
 
 
 # APP ROUTES ######################################################################
@@ -81,9 +66,20 @@ def load_user(user_id):
 def index():
 	return render_template('index.html')
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET','POST'])
 def signup():
-  return render_template('signup.html')
+	error = None
+	if request.method == 'POST':
+		name = request.form['name']
+		email = request.form['email']
+		password = request.form['password']
+		if User.query.get(email):
+			error = "Sorry, this email address already exists."
+			return render_template('signup.html', error = error)
+		new_user = User(email, password, name, True)
+		db.session.add(new_user)
+		db.session.commit()
+	return render_template('signup.html', error = error)
 
 @app.route('/upload')
 def upload():
