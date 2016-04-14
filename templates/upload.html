@@ -1,11 +1,12 @@
 {% extends "nav_layout.html" %}
 {% block content %}
 
+<form action="{{ url_for('upload') }}" method="post">
 <div class="row">
   <div class="col-md-12 upload">
     <h1>1. NAME YOUR JOB<h1>
     <div class="form-group form-group-lg">
-      <input type="text" class="form-control" placeholder="ENTER NAME HERE...">
+      <input type="text" name="name" class="form-control" placeholder="ENTER NAME HERE...">
     </div><!-- /input-group -->
   </div>
 </div>
@@ -15,12 +16,12 @@
     <h1>2. UPLOAD YOUR TWO DESIGNS<h1>
     <h3>ENTER URL FOR OPTION A:</h3>
     <div class="form-group form-group-lg option-a">
-      <input type="text" class="form-control" placeholder="ENTER URL HERE..." style="background-color: rgb(250, 231, 240); color: rgb(244, 119, 175);">
+      <input type="text" name="url1" class="form-control" placeholder="ENTER URL HERE..." style="background-color: rgb(250, 231, 240); color: rgb(244, 119, 175);">
     </div><!-- /input-group -->
 
     <div class="form-group form-group-lg option-b">
       <h3>ENTER URL FOR OPTION B:</h3>
-      <input type="text" class="form-control" placeholder="ENTER URL HERE..." style="background-color: rgb(226, 248, 254); color: rgb(56, 213, 254);">
+      <input type="text" name="url2" class="form-control" placeholder="ENTER URL HERE..." style="background-color: rgb(226, 248, 254); color: rgb(56, 213, 254);">
     </div><!-- /input-group -->
 
   </div>
@@ -34,6 +35,7 @@
         SELECT BELOW
         <span class="caret"></span>
       </button>
+      <input type="text" id="num-voters-input" name="num-voters" class="form-control" style="display: none;">
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
         <li><a href="#" data-value="100">100</a></li>
         <li><a href="#" data-value="250">250</a></li>
@@ -52,6 +54,7 @@
     </div>
   </div>
 </div>
+</form>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -60,7 +63,9 @@
 $(".dropdown-menu li a").click(function(){
   $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
   $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+  $(this).parents(".dropdown").find('#num-voters-input').val($(this).data('value'));
 });
 </script>
+
 
 {% endblock %}

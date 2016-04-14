@@ -25,36 +25,43 @@ class Challenges(db.Model):
 	__tablename__ = 'challenges'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(200))
-	
-	def __init__(self, id):
+	user_email = db.Column(db.String(200))
+	url1 = db.Column(db.String(200))
+	url2 = db.Column(db.String(200))
+	task1_id = db.Column(db.Integer)
+	num_voters = db.Column(db.Integer)
+	task1_completed = db.Column(db.Boolean, default=False)
+
+	def __init__(self, name, url1, url2, num_voters):
 		self.id = id
+		self.name = name
+		self.url1 = url1
+		self.url2 = url2
+		self.num_voters = num_voters
+		self.user_email = current_user.user.email
 
 class User(db.Model):
-    __tablename__ = 'users'
-    email = db.Column(db.String, primary_key=True)
-    password = db.Column(db.String)
-    name = db.Column(db.String)
-    # authenticated = db.Column(db.Boolean, default=False)
-
-    def __init__(self, email, password, name, authenticated):
+	__tablename__ = 'users'
+	email = db.Column(db.String, primary_key=True)
+	password = db.Column(db.String)
+	name = db.Column(db.String)
+		
+	def __init__(self, email, password, name, authenticated):
 		self.email = email
 		self.password = password
 		self.name = name
-		# self.authenticated = authenticated
 
-    def is_active(self):
-        return True
+	def is_active(self):
+		return True
 
-    def get_id(self):
-        return self.email
+	def get_id(self):
+		return self.email
 
-    def is_authenticated(self):
-        # return self.authenticated
-        return True
+	def is_authenticated(self):
+		return True
 
-    def is_anonymous(self):
-        return False
-
+	def is_anonymous(self):
+		return False
 
 # HELPER FUNCTIONS ################################################################
 def get_session_error():
@@ -120,9 +127,18 @@ def welcome():
 		return redirect(url_for('index'))
 	return render_template('welcome.html', error = get_session_error())
 
-@app.route('/upload')
+@app.route('/upload', methods=['GET','POST'])
 def upload():
-  return render_template('upload.html')
+	error = None
+	if request.method == 'POST':
+		name = request.form['name']
+		url1 = request.form['url1']
+		url2 = request.form['url2']
+		num_voters = request.form['num-voters']
+		new_challenge = Challenges(name, url1, url2, num_voters)
+		db.session.add(new_challenge)
+		db.session.commit()
+	return render_template('upload.html', error = error)
 
 if __name__ == '__main__':
 	app.run(debug=True)
