@@ -34,13 +34,13 @@ class User(db.Model):
     email = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
     name = db.Column(db.String)
-    authenticated = db.Column(db.Boolean, default=False)
+    # authenticated = db.Column(db.Boolean, default=False)
 
     def __init__(self, email, password, name, authenticated):
 		self.email = email
 		self.password = password
 		self.name = name
-		self.authenticated = authenticated
+		# self.authenticated = authenticated
 
     def is_active(self):
         return True
@@ -49,10 +49,20 @@ class User(db.Model):
         return self.email
 
     def is_authenticated(self):
-        return self.authenticated
+        # return self.authenticated
+        return True
 
     def is_anonymous(self):
         return False
+
+
+# HELPER FUNCTIONS ################################################################
+def get_session_error():
+	error = ""
+	if 'error' in session:
+		error = session['error']
+	session[error] = ""
+	return error
 
 
 # USER LOADER #####################################################################
@@ -62,11 +72,30 @@ def load_user(user_id):
 
 
 # APP ROUTES ######################################################################
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def index():
-	return render_template('index.html')
+	if current_user.is_authenticated:
+		return redirect(url_for('welcome'))
+	if request.method == 'POST':
+		email = request.form['email']
+		password = request.form['password']
+		if email is None or password is None:
+			session['error'] = "Please enter a username and password."
+			return redirect(url_for('index'))
+		user = User.query.get(email)
+		if login_user(user):
+			return redirect(url_for('welcome'))
+		else:
+			session['error'] = "Invalid username or password. Please try again."
+			return redirect(url_for('index'))
+	return render_template('index.html', error = get_session_error())
 
-@app.route('/signup', methods=['GET','POST'])
+@app.route('/logout', methods=['GET','POST'])
+def logout():
+	logout_user()
+	return redirect(url_for('index'))
+
+@app.route('/signup', methods = ['GET','POST'])
 def signup():
 	error = None
 	if request.method == 'POST':
@@ -74,12 +103,22 @@ def signup():
 		email = request.form['email']
 		password = request.form['password']
 		if User.query.get(email):
-			error = "Sorry, this email address already exists."
+			session['error'] = "Sorry, this email address already exists."
 			return render_template('signup.html', error = error)
-		new_user = User(email, password, name, True)
+		new_user = User(email, password, name)
 		db.session.add(new_user)
 		db.session.commit()
-	return render_template('signup.html', error = error)
+		if login_user(new_user):
+			return redirect(url_for('welcome'))
+		else:
+			return redirect(url_for('index'))
+	return render_template('signup.html', error = get_session_error())
+
+@app.route('/welcome')
+def welcome():
+	if not current_user.is_authenticated:
+		return redirect(url_for('index'))
+	return render_template('welcome.html', error = get_session_error())
 
 @app.route('/upload')
 def upload():
