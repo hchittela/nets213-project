@@ -26,19 +26,18 @@ class Challenges(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(200))
 	user_email = db.Column(db.String(200))
-	url1 = db.Column(db.String(200))
-	url2 = db.Column(db.String(200))
+	url_1 = db.Column(db.String(200))
+	url_2 = db.Column(db.String(200))
 	task1_id = db.Column(db.Integer)
 	num_voters = db.Column(db.Integer)
 	task1_completed = db.Column(db.Boolean, default=False)
 
-	def __init__(self, name, url1, url2, num_voters):
-		self.id = id
+	def __init__(self, name, url_1, url_2, num_voters, email):
 		self.name = name
-		self.url1 = url1
-		self.url2 = url2
+		self.url_1 = url_1
+		self.url_2 = url_2
 		self.num_voters = num_voters
-		self.user_email = current_user.user.email
+		self.user_email = email
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -129,16 +128,17 @@ def welcome():
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
-	error = None
+	if not current_user.is_authenticated:
+		return redirect(url_for('index'))
 	if request.method == 'POST':
 		name = request.form['name']
 		url1 = request.form['url1']
 		url2 = request.form['url2']
 		num_voters = request.form['num-voters']
-		new_challenge = Challenges(name, url1, url2, num_voters)
+		new_challenge = Challenges(name, url1, url2, num_voters, current_user.email)
 		db.session.add(new_challenge)
 		db.session.commit()
-	return render_template('upload.html', error = error)
+	return render_template('upload.html', error = get_session_error())
 
 if __name__ == '__main__':
 	app.run(debug=True)

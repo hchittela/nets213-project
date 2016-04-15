@@ -13,21 +13,19 @@
 
 #logo-header a {
 	color: white;
-	font-family: 'Roboto', sans-serif;
 	font-weight: 700;
 	font-size: 40px;
 }
 
-#bs-example-navbar-collapse-1 a{
+#bs-example-navbar-collapse-1 a {
 	color: white;
-	font-family: 'Roboto', sans-serif;
-	font-weight: 400;
+	font-weight: 700;
+	letter-spacing: -0.6px;
+	font-size: 20px;
 }
 
-#bs-example-navbar-collapse-1 a:hover{
+#bs-example-navbar-collapse-1 a:hover {
 	border-bottom: 5px solid #EE5EA2;
-	font-family: 'Roboto', sans-serif;
-	font-weight: 500;
 }
 
 /*Unique CSS for Responses Page (with the Thumbnails)*/
@@ -48,7 +46,6 @@
 }
 
 .responses a {
-	font-family: 'Roboto', sans-serif;
 	font-weight: 500;
 	font-size: 17px;
 	color: #6f78c3;
@@ -61,13 +58,6 @@
 }
 
 /*Unique CSS for Response Page*/
-
-h1 {
-	font-family: 'Roboto', sans-serif;
-	font-weight: 700;
-	font-size: 30px;
-	color: #5C5C5C;
-}
 
 .upload h1 {
 	font-size: 27px;
@@ -96,9 +86,7 @@ h1 {
 
 .form-control {
   background-color: rgb(240,240,240);
-  /*color: rgb(142, 142, 142);*/
   color: black;
-  font-family: 'Roboto', sans-serif;
   font-weight: 100;
   border-color: rgb(168, 168, 168);
 }
@@ -112,13 +100,6 @@ h1 {
 .option-b .form-control:-moz-placeholder { color: rgb(56, 213, 254); }
 .option-b .form-control::-moz-placeholder { color: rgb(56, 213, 254); }
 .option-b .form-control:-ms-input-placeholder { color: rgb(56, 213, 254); }
-
-h3 {
-	font-family: 'Roboto', sans-serif;
-	font-weight: 400;
-	font-size: 15px;
-	color: #5C5C5C;
-}
 
 .dropdown-toggle {
 	background-color: rgb(240,240,240);
@@ -137,13 +118,11 @@ h3 {
 	font-size: 15px;
 }
 
-.dropdown-menu li a{
-	font-family: 'Roboto', sans-serif;
+.dropdown-menu li a {
 	font-weight: 300;
 	font-size: 15px;
 }
 
 .upload-btn {
-	font-family: 'Roboto', sans-serif;
 	font-weight: 500;
 }
