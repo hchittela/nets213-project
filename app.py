@@ -81,7 +81,7 @@ def load_user(user_id):
 @app.route('/', methods = ['GET', 'POST'])
 def index():
 	if current_user.is_authenticated:
-		return redirect(url_for('welcome'))
+		return redirect(url_for('responses'))
 	if request.method == 'POST':
 		email = request.form['email']
 		password = request.form['password']
@@ -90,7 +90,7 @@ def index():
 			return redirect(url_for('index'))
 		user = User.query.get(email)
 		if login_user(user):
-			return redirect(url_for('welcome'))
+			return redirect(url_for('responses'))
 		else:
 			session['error'] = "Invalid username or password. Please try again."
 			return redirect(url_for('index'))
@@ -115,16 +115,16 @@ def signup():
 		db.session.add(new_user)
 		db.session.commit()
 		if login_user(new_user):
-			return redirect(url_for('welcome'))
+			return redirect(url_for('responses'))
 		else:
 			return redirect(url_for('index'))
 	return render_template('signup.html', error = get_session_error())
 
-@app.route('/welcome')
-def welcome():
+@app.route('/responses')
+def responses():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
-	return render_template('welcome.html', error = get_session_error())
+	return render_template('responses.html', error = get_session_error())
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
