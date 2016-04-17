@@ -46,7 +46,7 @@ class User(db.Model):
 	password = db.Column(db.String)
 	name = db.Column(db.String)
 		
-	def __init__(self, email, password, name, authenticated):
+	def __init__(self, email, password, name):
 		self.email = email
 		self.password = password
 		self.name = name
@@ -96,14 +96,15 @@ def index():
 	if request.method == 'POST':
 		email = request.form['email']
 		password = request.form['password']
-		if email is None or password is None:
-			session['error'] = "Please enter a username and password."
+		if not email or not password:
+			session['error'] = "Please enter an email and password."
 			return redirect(url_for('index'))
 		user = User.query.get(email)
-		if login_user(user):
-			return redirect(url_for('responses'))
+		if user:
+			if login_user(user):
+				return redirect(url_for('responses'))
 		else:
-			session['error'] = "Invalid username or password. Please try again."
+			session['error'] = "Invalid email or password. Please try again."
 			return redirect(url_for('index'))
 	return render_template('index.html', error = get_session_error())
 
@@ -114,14 +115,16 @@ def logout():
 
 @app.route('/signup', methods = ['GET','POST'])
 def signup():
-	error = None
 	if request.method == 'POST':
 		name = request.form['name']
 		email = request.form['email']
 		password = request.form['password']
+		if not name or not email or not password:
+			session['error'] = "Please enter a name, email, and password."
+			return redirect(url_for('signup'))
 		if User.query.get(email):
 			session['error'] = "Sorry, this email address already exists."
-			return render_template('signup.html', error = error)
+			return render_template('signup.html', error = get_session_error())
 		new_user = User(email, password, name)
 		db.session.add(new_user)
 		db.session.commit()
@@ -139,7 +142,6 @@ def responses():
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
-	error = None
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
 	if request.method == 'POST':
