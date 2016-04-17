@@ -1,5 +1,9 @@
 /*Nav Bar Stuff*/
 
+.navbar {
+	border-radius: 0px !important;
+}
+
 .navbar-default {
 	position: relative;
 	height: 57px;
