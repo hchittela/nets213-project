@@ -105,13 +105,13 @@ def index():
 		password = request.form['password']
 		if not email or not password:
 			session['error'] = "Please enter an email and password."
-			return redirect(url_for('index'))
+			return render_template('index.html', error = get_session_error())
 		user = User.query.get(email)
 		if user and user.check_password(password) and login_user(user):
 			return redirect(url_for('responses'))
 		else:
 			session['error'] = "Invalid email or password. Please try again."
-			return redirect(url_for('index'))
+			return render_template('index.html', error = get_session_error())
 	return render_template('index.html')
 
 @app.route('/logout', methods=['GET','POST'])
@@ -127,7 +127,7 @@ def signup():
 		password = request.form['password']
 		if not name or not email or not password:
 			session['error'] = "Please enter a name, email, and password."
-			return redirect(url_for('signup'))
+			return render_template('signup.html', error = get_session_error())
 		if User.query.get(email):
 			session['error'] = "Sorry, this email address already exists."
 			return render_template('signup.html', error = get_session_error())
