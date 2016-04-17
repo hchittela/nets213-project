@@ -78,6 +78,13 @@ def get_session_error():
 	session[error] = ""
 	return error
 
+def get_session_success():
+	success = ""
+	if 'success' in session:
+		success = session['success']
+	session[success] = ""
+	return success
+
 def is_valid_url(url):
 	try:
 		request = requests.get(url)
@@ -190,6 +197,8 @@ def upload():
 		new_challenge = Challenges(name, url1, url2, num_voters, current_user.email, description)
 		db.session.add(new_challenge)
 		db.session.commit()
+		session['success'] = "Success! Your images have been uploaded. A CrowdFlower task will be created soon."
+		return render_template('upload.html', success = get_session_success())
 	return render_template('upload.html')
 
 if __name__ == '__main__':

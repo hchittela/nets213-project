@@ -1,6 +1,13 @@
 {% extends "nav_layout.html" %}
 {% block content %}
 
-
+<div class="row">
+  <div class="col-md-12 upload">
+    <h1>RESPONSES<h1>
+    <div class="form-group form-group-lg">
+      Looks like you have no responses yet. Upload your images <a href="{{ url_for('upload') }}">here</a>!
+    </div><!-- /input-group -->
+  </div>
+</div>
 
 {% endblock %}

@@ -48,6 +48,12 @@
         <strong>Error:</strong> {{ error }}
       </div>
       {% endif %}
+      {% if success %}
+      <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Yay!</strong> {{ success }}
+      </div>
+      {% endif %}
 			{% block content %}
 			{% endblock %}
 		</div>
