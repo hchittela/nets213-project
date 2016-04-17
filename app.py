@@ -10,6 +10,7 @@ from flask.ext.login import (LoginManager, current_user, login_required, login_u
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import or_, and_
 from sqlalchemy.dialects.mysql import *
+from hashlib import sha1
 
 
 # APP CONFIGURATION ###############################################################
@@ -42,9 +43,9 @@ class Challenges(db.Model):
 
 class User(db.Model):
 	__tablename__ = 'users'
-	email = db.Column(db.String, primary_key=True)
-	password = db.Column(db.String)
-	name = db.Column(db.String)
+	email = db.Column(db.String(100), primary_key=True)
+	password = db.Column(db.String(200))
+	name = db.Column(db.String(100))
 		
 	def __init__(self, email, password, name):
 		self.email = email
@@ -62,6 +63,10 @@ class User(db.Model):
 
 	def is_anonymous(self):
 		return False
+
+	def check_password(self, password):
+		return self.password == sha1(password).hexdigest()
+
 
 # HELPER FUNCTIONS ################################################################
 def get_session_error():
@@ -100,9 +105,8 @@ def index():
 			session['error'] = "Please enter an email and password."
 			return redirect(url_for('index'))
 		user = User.query.get(email)
-		if user:
-			if login_user(user):
-				return redirect(url_for('responses'))
+		if user and user.check_password(password) and login_user(user):
+			return redirect(url_for('responses'))
 		else:
 			session['error'] = "Invalid email or password. Please try again."
 			return redirect(url_for('index'))
@@ -125,12 +129,13 @@ def signup():
 		if User.query.get(email):
 			session['error'] = "Sorry, this email address already exists."
 			return render_template('signup.html', error = get_session_error())
-		new_user = User(email, password, name)
+		new_user = User(email, sha1(password).hexdigest(), name)
 		db.session.add(new_user)
 		db.session.commit()
 		if login_user(new_user):
 			return redirect(url_for('responses'))
 		else:
+			session['error'] = "Sorry, something went wrong. Please try again."
 			return redirect(url_for('index'))
 	return render_template('signup.html', error = get_session_error())
 
