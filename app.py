@@ -33,13 +33,15 @@ class Challenges(db.Model):
 	task1_id = db.Column(db.Integer)
 	num_voters = db.Column(db.Integer)
 	task1_completed = db.Column(db.Boolean, default=False)
+	description = db.Column(db.String(200))
 
-	def __init__(self, name, url_1, url_2, num_voters, email):
+	def __init__(self, name, url_1, url_2, num_voters, email, description):
 		self.name = name
 		self.url_1 = url_1
 		self.url_2 = url_2
 		self.num_voters = num_voters
 		self.user_email = email
+		self.description = description
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -110,7 +112,7 @@ def index():
 		else:
 			session['error'] = "Invalid email or password. Please try again."
 			return redirect(url_for('index'))
-	return render_template('index.html', error = get_session_error())
+	return render_template('index.html')
 
 @app.route('/logout', methods=['GET','POST'])
 def logout():
@@ -136,39 +138,59 @@ def signup():
 			return redirect(url_for('responses'))
 		else:
 			session['error'] = "Sorry, something went wrong. Please try again."
-			return redirect(url_for('index'))
-	return render_template('signup.html', error = get_session_error())
+			return render_template('signup.html', error = get_session_error())
+	return render_template('signup.html')
 
 @app.route('/responses')
 def responses():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
-	return render_template('responses.html', error = get_session_error())
+	return render_template('responses.html')
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
 	if request.method == 'POST':
+		# Check that they entered name
 		name = request.form['name']
+		if name == "":
+			session['error'] = "Please enter a job name."
+			return render_template('upload.html', error = get_session_error())
 		
 		# Check first url
 		url1 = request.form['url1']
 		if not is_valid_url(url1):
 			session['error'] = "Sorry, the first URL was not valid. Please enter a valid URL."
-			return render_template('upload.html', error = error)
+			return render_template('upload.html', error = get_session_error())
 		
 		# Check second url
 		url2 = request.form['url2']
 		if not is_valid_url(url2):
 			session['error'] = "Sorry, the second URL was not valid. Please enter a valid URL."
-			return render_template('upload.html', error = error)
+			return render_template('upload.html', error = get_session_error())
 		
+		# Check that URLs are not same
+		if url1 == url2:
+			session['error'] = "Sorry, both URLs cannot be the same. Please enter two different URLs."
+			return render_template('upload.html', error = get_session_error())
+
+		# Check that they entered description
+		description = request.form['description']
+		if description == "":
+			session['error'] = "Please enter a description."
+			return render_template('upload.html', error = get_session_error())
+
+		# Check that they chose num voters
 		num_voters = request.form['num-voters']
-		new_challenge = Challenges(name, url1, url2, num_voters, current_user.email)
+		if num_voters == "0":
+			session['error'] = "Please choose the number of voters you would like."
+			return render_template('upload.html', error = get_session_error())
+		
+		new_challenge = Challenges(name, url1, url2, num_voters, current_user.email, description)
 		db.session.add(new_challenge)
 		db.session.commit()
-	return render_template('upload.html', error = get_session_error())
+	return render_template('upload.html')
 
 if __name__ == '__main__':
 	app.run(debug=True)
