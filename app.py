@@ -3,6 +3,7 @@ import os
 import time
 import math
 import random
+import requests
 
 from flask import Flask, redirect, render_template, request, session, url_for
 from flask.ext.login import (LoginManager, current_user, login_required, login_user, logout_user, UserMixin, confirm_login, fresh_login_required)
@@ -70,6 +71,16 @@ def get_session_error():
 	session[error] = ""
 	return error
 
+def is_valid_url(url):
+	try:
+		request = requests.get(url)
+		if request.status_code == 200:
+			return True
+		else:
+			return False 
+	except requests.exceptions.RequestException as e:
+		return False
+
 
 # USER LOADER #####################################################################
 @login_manager.user_loader
@@ -128,12 +139,24 @@ def responses():
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
+	error = None
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
 	if request.method == 'POST':
 		name = request.form['name']
+		
+		# Check first url
 		url1 = request.form['url1']
+		if not is_valid_url(url1):
+			session['error'] = "Sorry, the first URL was not valid. Please enter a valid URL."
+			return render_template('upload.html', error = error)
+		
+		# Check second url
 		url2 = request.form['url2']
+		if not is_valid_url(url2):
+			session['error'] = "Sorry, the second URL was not valid. Please enter a valid URL."
+			return render_template('upload.html', error = error)
+		
 		num_voters = request.form['num-voters']
 		new_challenge = Challenges(name, url1, url2, num_voters, current_user.email)
 		db.session.add(new_challenge)
