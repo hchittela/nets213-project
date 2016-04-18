@@ -90,8 +90,9 @@ h3 {
 	margin: 0px auto;
 }
 
-.error-login {
-	color: #E53935;
+.alert-danger {
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 p {
