@@ -2,11 +2,12 @@
 
 .navbar {
 	border-radius: 0px !important;
+	border: 0px !important;
 }
 
 .navbar-default {
 	position: relative;
-	height: 57px;
+	/*height: 57px;*/
 	top: -1px;
 	background: #EE5EA2; /* For browsers that do not support gradients */
 	background: -webkit-linear-gradient(left, #EE5EA2 , #32CBFD); /* For Safari 5.1 to 6.0 */
@@ -26,10 +27,13 @@
 	font-weight: 700;
 	letter-spacing: -0.6px;
 	font-size: 20px;
+	border-bottom: 5px solid transparent;
+	border-top: 5px solid transparent;
 }
 
 #bs-example-navbar-collapse-1 a:hover {
 	border-bottom: 5px solid #EE5EA2;
+	border-top: 5px solid transparent;
 }
 
 /*Unique CSS for Responses Page (with the Thumbnails)*/
