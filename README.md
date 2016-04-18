@@ -7,21 +7,13 @@ Our project is a tool for designers to receive feedback on their designs. Your j
 Your job:
 
 1. Go to http://nets213ccb.herokuapp.com
-
 2. Sign up for an account.
-
 3. Once signed up and inside the website, click the “Upload” button.
-
 4. Name your job (e.g. NETS 213 Logo for <project name>)
-
 5. Enter the URL for the first design (publicly accessible on the Internet ending in .jpg or .png, can be from threadless.com for example)
-
 6. Enter the URL for the second design (publicly accessible on the Internet ending in .jpg or .png, can be from threadless.com for example)
-
 7. Choose the number of responses you’d like (100, 250, or 500)
-
 8. Click “Upload”
-
 9. Repeat steps 3-8 five times
 
 That’s it! If you have any issues with the above, please contact gagang@seas.upenn.edu, hemanthc@seas.upenn.edu, sandsa@seas.upenn.edu, and mnie@seas.upenn.edu. 
