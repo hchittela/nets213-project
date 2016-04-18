@@ -1,5 +1,24 @@
 # CCB - Crowdsourced Comparative Branding
+http://nets213ccb.herokuapp.com
 
+##Overview
+We've utilized Flask with a MySQL database to make this project a reality. Web hosting is done via Heroku. Creating an entire website obviously means there are a lot of different parts; in this README we will go over the main code for this project. 
+
+##Files
+**app.py**:
+This file has most of the backend logic for our app. Starting from the top and working our way down the file: We utilized the SQLAlchemy framework within Flask to handle the database transactions. We then define and create the database models to match up exactly with the database tables we have created in MySQL. The _Challenges_ table represents an upload by a designer - or a 'challenge' between two designs to see which is better. The _User_ table is what our login/signup system is built on, and holds name, email, and password information (hashed, of course). After a few helper functions, around mid-way through the file and down are our app routes. These define what pages load when specific URL endpoints are hit. They also further hold all our logic for form validation (e.g. making sure users don't leave a field empty). 
+
+**config.py**:
+This file is smaller - it essentially sets a few essential features and connects us to our database. 
+
+**templates folder**:
+This folder contains all of our HTML code. We utilized python's templating: our main templates are nav_layout.html and bg_layout.html. bg_layout is the main page - it contains the template with the navigation bar of "Upload", "Responses", and "Log out" at the top. nav_layout is the template for the login and signup pages. As you can see, we used bootstrap as our main source of styling for this project. index.hmtl is the first page you hit when you go to the URL above, and is the login page. The rest of the pages extend their respective template and are named according to their function. 
+
+**static folder**: This folder contains all of our CSS and images. As mentioned, we mainly used bootstrap for our styling, but also used a little but of custom CSS. 
+
+**src folder**: This folder contains all the python code that's used for CrowdFlower. job_create_upload extracts a CSV from our database, uploads it to CrowdFlower, and creates the job automatically based on how many responses the designer wanted. qc1input_to_qc1output takes the output from this initial job (the job in which workers vote and comment on a design), and filters out all of the people who answered the GOLD question incorrectly. The GOLD question is an obvious answer that we have put in to act as a quality control measure. qc1input_to_qc2input takes the output from the initial job and turns it into input for the second CrowdFlower task, which we have designed as a secondary quality control measure. This task takes all of the comments for a design and aggregates them into a new task, in which workers rate each comment on its usefulness relative to the design on a scale of 1-5. We then provide the top rated comments to the designer. Finally, aggregation takes the output from both tasks and puts them into a readable CSV file. We then provide this data back to the designer (under the "Responses" page in the navigation bar). 
+
+##Old README
 ##Customer Submission (4)
 **Idea**: Customers who wish to use our app will submit to us two separate versions of a design that they want feedback on. This can be screenshots of an app, color variations of a logo, different menu layouts for a website, etc. They will also specify at this time how many reviews they want on their mockups (100, 250, or 500).
 
