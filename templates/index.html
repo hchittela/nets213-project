@@ -31,11 +31,20 @@
 </nav>
 
 <header>
+	{% if error %} 
+	<div class="row alert-container" style="position:relative; top: 100px; padding: 0px 50px; width: 50%; text-align: center; margin-left: auto; margin-right: auto;">
+		<div class="alert alert-danger fade in" style="padding: 5px 0px; padding-right: 8px; margin-right: auto; margin-left: auto;">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Error:</strong> {{ error }}
+		</div>
+	</div>
+	{% endif %}
+
 	<div class="row header-content">
 			<div class="header-content-inner">
 					<h1>Create designs the people will love.</h1>
 					<hr>
-					<p>CCB is a platform for honing designs based on the crowd.</p>
+					<p>CCB - Crowdsourced Comparative Branding - is a platform for honing designs based on the crowd.</p>
 					<a href="#about" class="btn btn-primary btn-xl page-scroll">Find Out More</a>
 			</div>
 
@@ -75,7 +84,7 @@
 					<div class="service-box">
 						<i class="fa fa-4x fa-diamond wow bounceIn" style="color: rgb(237,94,162);"></i>
 						<h3 class="landing-header">Upload a Design</h3>
-						<p class="text-muted">Upload a design you want an opinion on.</p>
+						<p class="text-muted">Upload two versions of a design you want an opinion on.</p>
 					</div>
 				</div>
 				<div class="col-lg-4 col-md-6 text-center">
