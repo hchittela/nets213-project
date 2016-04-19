@@ -134,10 +134,10 @@ def signup():
 		password = request.form['password']
 		if not name or not email or not password:
 			session['error'] = "Please enter a name, email, and password."
-			return render_template('signup.html', error = get_session_error())
+			return render_template('index.html', error = get_session_error())
 		if User.query.get(email):
 			session['error'] = "Sorry, this email address already exists."
-			return render_template('signup.html', error = get_session_error())
+			return render_template('index.html', error = get_session_error())
 		new_user = User(email, sha1(password).hexdigest(), name)
 		db.session.add(new_user)
 		db.session.commit()
@@ -145,8 +145,8 @@ def signup():
 			return redirect(url_for('responses'))
 		else:
 			session['error'] = "Sorry, something went wrong. Please try again."
-			return render_template('signup.html', error = get_session_error())
-	return render_template('signup.html')
+			return render_template('index.html', error = get_session_error())
+	return render_template('index.html')
 
 @app.route('/responses')
 def responses():

@@ -14,6 +14,17 @@ body {
     font-family: 'Roboto','Helvetica Neue',Arial,sans-serif;
 }
 
+h3.landing-header {
+  color: black;
+  font-weight: 500;
+  font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
+  text-transform: none;
+}
+
+.landing-button {
+  font-size: 14px;
+}
+
 .logo img {
     width: 30px; 
     height:auto;
@@ -70,7 +81,7 @@ body {
 
 .login .form-control {
     background-color: white;
-    color: rgb(204,204,204);
+    color: black;
     border-color: rgb(204,204,204);
 }
 
@@ -262,7 +273,7 @@ header {
     min-height: auto;
     text-align: center;
     color: #fff;
-    background-image: url(../img/header.jpg);
+    background-image: url(../images/header.jpg);
     background-position: center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
