@@ -8,7 +8,7 @@ import csv
 api_key = '-zk9FCZu_J6kWND991eQ'
 
 def main():
-    j = json.loads(create_job('job_4'))
+    j = json.loads(create_job('CCB Round 1'))
     data = get_challenges_db()
     csv_path = create_csv(data, str(j['id']))
     upload_csv(csv_path, str(j['id']))
@@ -50,12 +50,15 @@ def create_csv(data, job_id):
     csv_path = 'data/' + job_id + '_input.csv'
     c = csv.writer(open(csv_path, 'wb'))
     # write headers
-    c.writerow(('id', 'url_img1', 'url_img2'))
+    c.writerow(('id', '_golden', 'url_img1', 'url_img2', 'answer_golden'))
+
+
+    c.writerow((1, 'TRUE', 'http://i.imgur.com/AD3DgWB.jpg', 'http://i.imgur.com/lYoObRX.jpg', 'img_1'))
 
     # counter var used for id numbers in csv
-    counter = 1
+    counter = 2
     for (url1, url2) in data:
-        c.writerow((counter, url1, url2))
+        c.writerow((counter, '', url1, url2, ''))
         counter += 1
 
     return csv_path

@@ -1,0 +1,18 @@
+<div class="html-element-wrapper">
+  <img class="liquid-image" src="{{url_img1}}" />
+  <p>{{url_img1}}</p>
+  <img class="liquid-image" src="{{url_img2}}" />
+  <p>{{url_img2}}</p>
+</div>
+<cml:radios label="Select the most visually appealing design:" validates="required" gold="true">
+  <cml:radio label="First image" value="img_1" />
+  <cml:radio label="Second image" value="img_2" />
+</cml:radios>
+<cml:textarea label="Enter the reasoning for your decision:" validates="required" gold="true" />
+
+
+
+Instructions:
+The first option is on the  left, second is on the right.
+
+If an image does not appear: Paste the link that appears beneath the image in a new browser tab to view it.
