@@ -1,5 +1,5 @@
 
-data = open('majority_workers.txt', 'r')
+data = open('../data/majority_workers.txt', 'r')
 
 arr = []
 
