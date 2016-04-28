@@ -1,5 +1,6 @@
 import sys
 import csv
+import json
 
 idCol = 19
 labelCol = 15
@@ -71,18 +72,21 @@ def getQualities(filename, labels):
 
 
 def writeToFile(dict, filename):
-  target = open(filename, 'w')
+  # target = open(filename, 'w')
+  #
+  # for k in sorted(dict):
+  #   target.write(k.strip() + '\t' + str(dict[k]).strip() + '\n')
+  #
+  # target.close()
 
-  for k in sorted(dict):
-    target.write(k.strip() + '\t' + str(dict[k]).strip() + '\n')
+  with open(filename, 'w') as fp:
+    json.dump(dict, fp)
 
-  target.close()
-
+  fp.close()
 
 if __name__ == '__main__':
   idLabels = getLabels('../data/f901004.csv')
   writeToFile(idLabels, '../data/majority_data.txt')
 
   workerQualities = getQualities('../data/f901004.csv', idLabels)
-  print workerQualities
-  writeToFile(workerQualities, '../data/majority_workers.txt')
+  writeToFile(workerQualities, '../data/majority_workers.json')
