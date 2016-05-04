@@ -4,11 +4,12 @@ import time
 import math
 import random
 import requests
+import cf_job_create_upload
 
 from flask import Flask, redirect, render_template, request, session, url_for
 from flask.ext.login import (LoginManager, current_user, login_required, login_user, logout_user, UserMixin, confirm_login, fresh_login_required)
 from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, desc
 from sqlalchemy.dialects.mysql import *
 from hashlib import sha1
 
@@ -75,14 +76,14 @@ def get_session_error():
 	error = ""
 	if 'error' in session:
 		error = session['error']
-	session[error] = ""
+	session['error'] = ""
 	return error
 
 def get_session_success():
 	success = ""
 	if 'success' in session:
 		success = session['success']
-	session[success] = ""
+	session['success'] = ""
 	return success
 
 def is_valid_url(url):
@@ -152,7 +153,8 @@ def signup():
 def responses():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
-	return render_template('responses.html')
+	challenges = Challenges.query.filter_by(user_email = current_user.email).order_by(desc(Challenges.id)).all()
+	return render_template('responses.html', success = get_session_success(), responses = challenges)
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
@@ -197,8 +199,11 @@ def upload():
 		new_challenge = Challenges(name, url1, url2, num_voters, current_user.email, description)
 		db.session.add(new_challenge)
 		db.session.commit()
-		session['success'] = "Success! Your images have been uploaded. A CrowdFlower task will be created soon."
-		return render_template('upload.html', success = get_session_success())
+		if len(Challenges.query.filter_by(task1_id = None).all()) > 10:
+			# Generate Crowd Flower task
+			print "True"
+		session['success'] = "Success! Your images have been uploaded. The crowd will vote on your designs and we'll get back to you shortly with the results."
+		return redirect(url_for('responses'))
 	return render_template('upload.html')
 
 if __name__ == '__main__':

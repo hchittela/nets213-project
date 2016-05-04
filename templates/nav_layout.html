@@ -1,3 +1,5 @@
+{% set active_page = active_page|default('index') %}
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -53,8 +55,8 @@
 
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="{{ url_for('upload') }}">UPLOAD</a></li>
-						<li><a href="{{ url_for('responses') }}">RESPONSES</a></li>
+						<li {% if active_page == "upload" %} class="active" {% endif %}><a href="{{ url_for('upload') }}">UPLOAD</a></li>
+						<li {% if active_page == "responses" %} class="active" {% endif %}><a href="{{ url_for('responses') }}">RESPONSES</a></li>
 						<li><a href="{{ url_for('logout') }}">LOG OUT</a></li>
 						</li>
 					</ul>
@@ -65,13 +67,13 @@
 			{% if error %}
 				<div class="alert alert-danger">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Error:</strong> {{ error }}
+					{{ error }}
 				</div>
 			{% endif %}
 			{% if success %}
 				<div class="alert alert-success">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Yay!</strong> {{ success }}
+					{{ success }}
 				</div>
 			{% endif %}
 			{% block content %}

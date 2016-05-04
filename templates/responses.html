@@ -1,13 +1,19 @@
 {% extends "nav_layout.html" %}
+{% set active_page = 'responses' %}
+
 {% block content %}
 
-<div class="row">
-  <div class="col-md-12 upload">
-    <h2>Responses</h2>
-    <div class="form-group">
-      It looks like you have no responses yet. Looking to get some feedback on a design? Upload your images <a href="{{ url_for('upload') }}">here</a>!
-    </div><!-- /input-group -->
-  </div>
-</div>
+<h1 class="inside">Responses</h1>
+
+{% if not responses %}
+	<p>It looks like you have no responses yet. Looking to get some feedback on a design? Upload your images <a href="{{ url_for('upload') }}">here</a>!</p>
+{% else %}
+	{% for response in responses %}
+		{{ response.name }}
+		<div class="row">
+			
+		</div>
+	{% endfor %}
+{% endif %}
 
 {% endblock %}

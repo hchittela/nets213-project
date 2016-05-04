@@ -31,9 +31,10 @@
 	border-top: 5px solid transparent;
 }
 
-#bs-example-navbar-collapse-1 a:hover {
+#bs-example-navbar-collapse-1 a:hover, #bs-example-navbar-collapse-1 li.active a {
 	border-bottom: 5px solid #EE5EA2;
 	border-top: 5px solid transparent;
+	background-color: transparent !important;
 }
 
 /*Unique CSS for Responses Page (with the Thumbnails)*/
