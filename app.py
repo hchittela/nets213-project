@@ -4,6 +4,7 @@ import time
 import math
 import random
 import requests
+import crowdflower
 import cf_job_create_upload
 
 from flask import Flask, redirect, render_template, request, session, url_for
@@ -21,6 +22,8 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+conn = crowdflower.Connection(api_key='Gj3sWX7wb18uHb88BsJC')
 
 
 # DATABASE MODELS #################################################################
@@ -96,6 +99,85 @@ def is_valid_url(url):
 	except requests.exceptions.RequestException as e:
 		return False
 
+def create_crowdflower_task1():
+	data = []
+	# The golden question
+	data.append({
+		'id': 0,
+		'description': 'Which of these two poster designs would look better as a motivational graphic?',
+		'url_img1': 'http://i.imgur.com/AD3DgWB.jpg',
+		'url_img2': 'http://i.imgur.com/lYoObRX.jpg',
+		'_golden': 'TRUE',
+		'better_gold': 'img_1',
+		'better_gold_reason': 'The second image shown had a typo.',
+	})
+
+	challenges = Challenges.query.filter_by(task1_id = None).all()
+	for challenge in challenges:
+		data.append({
+			'id': challenge.id,
+			'description': challenge.description,
+			'url_img1': challenge.url_1,
+			'url_img2': challenge.url_2,
+			'_golden': '',
+			'better_gold': '',
+			'better_gold_reason': '',
+		})
+
+	job = conn.upload(data)
+	update_result = job.update({
+		'title': 'Comment on Graphic Design - %s' % job.id,
+		'included_countries': ['US', 'GB'],
+		'payment_cents': 3,
+		'judgments_per_unit': 20,
+		'units_per_assignment': 5,
+		'instructions': '<h1>Pick the Best Designs</h1><p>Help our designers determine which of their two designs is more appealing by leaving comments and selecting your favorite.</p><p>Bonuses will be awarded for high quality answers and workers will be banned for gibberish or unthoughtful responses.</p>',
+		'cml': '''
+			<p class="description">{{description}}</p>
+			<div class="graphic-divider padded">
+			  <h1>Design 1:</h1>
+			  <img src="{{url_img1}}" alt="Image not found." />
+			  <cml:textarea label="Comments on Design 1:" validates="required" default="What is your opinion of Design 1? What could be improved? Fonts? Colors? Image quality? Please write 1-2 sentences."/>
+			</div>
+			<div class="graphic-divider padded">
+			  <h1>Design 2:</h1>
+			  <img src="{{url_img2}}" alt="Image not found." />  
+			  <cml:textarea label="Comments on Design 2:" validates="required" default="What is your opinion of Design 2? What could be improved? Fonts? Colors? Image quality? Please write 1-2 sentences."/>
+			</div>
+			<div class="padded">
+			  <cml:select label="Best Design:" validates="required">
+			    <cml:option label="Design 1" value="img_1"/>
+			    <cml:option label="Design 2" value="img_2" />
+			    <cml:option label="Both Not Found" value="not_found" />
+			  </cml:select>
+			</div>''',
+		'css': '''
+			.padded {
+			  padding: 2%;
+			}
+			.graphic-divider {
+			  display: inline-block;
+			  vertical-align: top;
+			  width: 46%;
+			  margin-right: -4px;
+			  box-sizing: border-box;
+			}
+			.description {
+			  font-size: 26px;
+			}''',
+	})
+
+	# Update the task ID for all the rows we just uploaded to CrowdFlower
+	for challenge in challenges:
+		challenge.task1_id = job.id
+	db.session.commit()
+
+	# job.launch(5, channels=['cf_internal'])
+	job.launch(5)
+
+def get_crowdflower_results_task1():
+	return ""
+
 
 # USER LOADER #####################################################################
 @login_manager.user_loader
@@ -154,6 +236,7 @@ def responses():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
 	challenges = Challenges.query.filter_by(user_email = current_user.email).order_by(desc(Challenges.id)).all()
+	get_crowdflower_results_task1()
 	return render_template('responses.html', success = get_session_success(), responses = challenges)
 
 @app.route('/upload', methods=['GET','POST'])
@@ -201,7 +284,7 @@ def upload():
 		db.session.commit()
 		if len(Challenges.query.filter_by(task1_id = None).all()) > 10:
 			# Generate Crowd Flower task
-			print "True"
+			create_crowdflower_task1()
 		session['success'] = "Success! Your images have been uploaded. The crowd will vote on your designs and we'll get back to you shortly with the results."
 		return redirect(url_for('responses'))
 	return render_template('upload.html')

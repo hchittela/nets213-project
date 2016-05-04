@@ -9,9 +9,8 @@
 	<p>It looks like you have no responses yet. Looking to get some feedback on a design? Upload your images <a href="{{ url_for('upload') }}">here</a>!</p>
 {% else %}
 	{% for response in responses %}
-		{{ response.name }}
 		<div class="row">
-			
+			{{ response.name }}	
 		</div>
 	{% endfor %}
 {% endif %}
