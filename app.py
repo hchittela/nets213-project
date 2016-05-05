@@ -6,7 +6,6 @@ import math
 import random
 import requests
 import crowdflower
-import cf_job_create_upload
 
 from flask import Flask, redirect, render_template, request, session, url_for
 from flask.ext.login import (LoginManager, current_user, login_required, login_user, logout_user, UserMixin, confirm_login, fresh_login_required)
@@ -51,29 +50,6 @@ class Challenges(db.Model):
 		self.description = description
 		self.votes_1 = votes_1
 		self.votes_2 = votes_2
-
-class Comments(db.Model):
-	__tablename__ = 'comments'
-	id = db.Column(db.Integer, primary_key=True)
-	challenge_id = db.Column(db.Integer)
-	individual_id = db.Column(db.Integer)
-	img = db.Column(db.Integer)
-	img_url = db.Column(db.String(200))
-	comment = db.Column(db.String(200))
-	score = db.Column(db.Integer)
-	task2_id = db.Column(db.Integer)
-	task2_completed = db.Column(db.Boolean, default=False)
-
-	def __init__(self, name, challenge_id, individual_id, img, img_url, comment):
-		self.name = name
-		self.challenge_id = challenge_id
-		self.individual_id = individual_id
-		self.img = img
-		self.img_url = img_url
-		self.comment = comment
-		self.score = score
-		self.task2_id = task2_id
-		self.task2_completed = task2_completed
 
 class Comments(db.Model):
 	__tablename__ = 'comments'
