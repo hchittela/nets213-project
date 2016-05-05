@@ -397,6 +397,14 @@ def response(id):
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
 	challenge = Challenges.query.get(id)
+	# Check if the challenge exists
+	if not challenge:
+		session['error'] = "This response is not found. Please try again."
+		return redirect(url_for('index'))
+	# Check if the current user posted the challenge
+	if challenge.user_email != current_user.email:
+		session['error'] = "You were not the poster of this challenge and are not authorized to view it."
+		return redirect(url_for('index'))
 	comments_1 = Comments.query.filter_by(challenge_id=id).filter_by(img=1).order_by(desc(Comments.score)).limit(5).all()
 	comments_2 = Comments.query.filter_by(challenge_id=id).filter_by(img=2).order_by(desc(Comments.score)).limit(5).all()
 	return render_template('response.html', success = get_session_success(), response = challenge, comments_1 = comments_1, comments_2=comments_2)
