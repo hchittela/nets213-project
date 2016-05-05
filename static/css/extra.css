@@ -26,8 +26,6 @@
 
 #bs-example-navbar-collapse-1 a:hover{
 	border-bottom: 5px solid #EE5EA2;
-	font-family: 'Roboto', sans-serif;
-	font-weight: 500;
 }
 
 /*Unique CSS for Responses Page (with the Thumbnails)*/
@@ -59,14 +57,17 @@
 	margin: none;
 	border: none;
 	border-radius: 0;
-	border-bottom: 5px solid rgba(247, 229, 0, 0);
 }
 
-.responses:hover, .responses a:hover {
+.responses:not(.optionA):not(.optionB):hover, .responses a:not(.optionA):not(.optionB):hover {
 	text-decoration: none;
 	color: #2d336c;
 	border-bottom: 5px solid rgba(247, 229, 0, 1);
 	margin: none;
+}
+
+.responses.optionA.winner, .responses.optionB.winner {
+	border-bottom: 5px solid rgba(247, 229, 0, 1);
 }
 
 /*Unique CSS for Response Page*/
@@ -93,8 +94,8 @@ h1 {
 	border: solid 0.5px #5C5C5C;
 	background-color: #F1F1F1;
 	margin-bottom: 15px;
-  width: 44%;
-  margin: 2%;
+	width: 44%;
+	margin: 2%;
 }
 
 .comments p {
@@ -122,16 +123,8 @@ h1 {
 	color: #38D5FD;
 }
 
-.optionA a:hover p {
-	color: #028eb1;
-}
-
 .optionB p {
 	color: #F577B0;
-}
-
-.optionB a:hover p {
-	color: #be0e5d;
 }
 
 .logo img {

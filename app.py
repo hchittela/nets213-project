@@ -389,7 +389,7 @@ def signup():
 def responses():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
-	challenges = Challenges.query.filter_by(user_email = current_user.email).order_by(desc(Challenges.id)).all()
+	challenges = Challenges.query.filter_by(user_email = current_user.email).order_by(Challenges.id).all()
 	return render_template('responses.html', success = get_session_success(), responses = challenges)
 
 @app.route('/response/<int:id>')

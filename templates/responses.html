@@ -8,21 +8,26 @@
 {% if not responses %}
 	<p>It looks like you have no responses yet. Looking to get some feedback on a design? Upload your images <a href="{{ url_for('upload') }}">here</a>!</p>
 {% else %}
+	{% set count = 0 %}
 	{% for response in responses %}
+		{% if count % 2 == 0 %}
 		<div class="row">
-			<div class = "col-md-6 responses" {% if not response.task1_completed %} style="opacity: 0.3; pointer-events: none;" {% endif %}>
-				<a href="{{ url_for('response', id=response.id) }}">
-					<p>{{ response.name }}</p>
+		{% endif %}
+		{% set count = count + 1 %}
+			<a href="{{ url_for('response', id=response.id) }}">
+				<div class = "col-md-6 responses" {% if not response.task1_completed %} style="opacity: 0.3; pointer-events: none;" {% endif %}>
+					<h3>{{ response.name }}</h3>
 					<div class="col-md-6">
 						<img src="{{ response.url_1 }}" class="img-thumbnail img-responsive">
 					</div>
-					
 					<div class="col-md-6">
 						<img src="{{ response.url_2 }}" class="img-thumbnail img-responsive">
 					</div>
-				</a>
-			</div>
+				</div>
+			</a>
+		{% if count % 2 == 0 %}
 		</div>
+		{% endif %}
 	{% endfor %}
 {% endif %}
 
