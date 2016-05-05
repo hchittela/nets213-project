@@ -1,0 +1,77 @@
+{% extends "nav_layout.html" %}
+{% set active_page = 'responses' %}
+
+{% block content %}
+
+{% if not response %}
+	not found
+{% else %}
+	<div class="alert alert-success">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>Success!</strong> Indicates a successful or positive action.
+	</div>
+
+	<div class="row">
+		<div class="col-md-12 results-title">
+			<h1>RESULTS FOR: {{ response.name }}<h1>
+		</div>
+	</div>
+
+	<div class="row">
+
+		<div class = "col-md-6 responses response option optionA">
+			<a href="#">
+				<div class="option-header">
+					<div class="col-md-6">
+						<p>OPTION A</p>
+					</div>
+
+					<div class="col-md-6">
+						<p>Votes: {{ response.votes_1 }}</p>
+					</div>   
+				</div>
+				<img src="{{ response.url_1 }}" class="img-thumbnail img-responsive">
+			</a>
+		</div>
+		 
+		 <div class = "col-md-6 responses response option optionB">
+			<a href="#">
+				<div class="col-md-6">
+					<p>OPTION B</p>
+				</div>
+
+				<div class="col-md-6">
+					<p>Votes: {{ response.votes_2 }}</p>
+				</div>  
+				<img src="{{ response.url_2 }}" class="img-thumbnail img-responsive">
+			</a>
+		</div>
+
+	</div>
+
+	<div class="row">
+		<div class="col-md-12 results-title">
+			<h1>COMMENTS<h1>
+		</div>
+	</div>
+
+	{% if not comments_1 %}
+	{% else %}
+		{% for i in range(0,5) %}
+			<div class="row">
+				<div class="col-md-6 comments">
+					<p>{{ comments_1[i].comment }}<p>
+				</div>
+				<div class="col-md-6 comments">
+					<p>{{ comments_2[i].comment }}<p>
+				</div>
+			</div>
+		{% endfor %}
+	{% endif %}
+
+	<br><br>
+{% endif %}
+
+<br><br>
+
+{% endblock %}
