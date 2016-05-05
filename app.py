@@ -356,7 +356,7 @@ def index():
 		else:
 			session['error'] = "Invalid email or password. Please try again."
 			return render_template('index.html', error = get_session_error())
-	return render_template('index.html')
+	return render_template('index.html', error = get_session_error())
 
 @app.route('/logout', methods=['GET','POST'])
 def logout():
@@ -390,7 +390,7 @@ def responses():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
 	challenges = Challenges.query.filter_by(user_email = current_user.email).order_by(Challenges.id).all()
-	return render_template('responses.html', success = get_session_success(), responses = challenges)
+	return render_template('responses.html', success = get_session_success(), error = get_session_error(), responses = challenges)
 
 @app.route('/response/<int:id>')
 def response(id):
@@ -400,11 +400,11 @@ def response(id):
 	# Check if the challenge exists
 	if not challenge:
 		session['error'] = "This response is not found. Please try again."
-		return redirect(url_for('index'))
+		return redirect(url_for('responses'))
 	# Check if the current user posted the challenge
 	if challenge.user_email != current_user.email:
 		session['error'] = "You were not the poster of this challenge and are not authorized to view it."
-		return redirect(url_for('index'))
+		return redirect(url_for('responses'))
 	comments_1 = Comments.query.filter_by(challenge_id=id).filter_by(img=1).order_by(desc(Comments.score)).limit(5).all()
 	comments_2 = Comments.query.filter_by(challenge_id=id).filter_by(img=2).order_by(desc(Comments.score)).limit(5).all()
 	return render_template('response.html', success = get_session_success(), response = challenge, comments_1 = comments_1, comments_2=comments_2)
