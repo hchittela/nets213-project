@@ -2,10 +2,13 @@ import sys
 import csv
 import json
 
-idCol = 19
-labelCol = 15
-workerIDCol = 9
+# idCol = 19
+# labelCol = 15
+# workerIDCol = 9
 
+idCol = 19
+labelCol = 12
+workerIDCol = 7
 
 def getLabels(filename):
   f = open(filename)
@@ -85,8 +88,8 @@ def writeToFile(dict, filename):
   fp.close()
 
 if __name__ == '__main__':
-  idLabels = getLabels('../data/f901004.csv')
-  writeToFile(idLabels, '../data/majority_data.txt')
+  idLabels = getLabels('../data/f904543.csv')
+  writeToFile(idLabels, '../data/904543_majority_data.txt')
 
-  workerQualities = getQualities('../data/f901004.csv', idLabels)
-  writeToFile(workerQualities, '../data/majority_workers.json')
+  workerQualities = getQualities('../data/f904543.csv', idLabels)
+  writeToFile(workerQualities, '../data/904543_majority_workers.json')
