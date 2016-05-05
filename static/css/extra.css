@@ -93,6 +93,8 @@ h1 {
 	border: solid 0.5px #5C5C5C;
 	background-color: #F1F1F1;
 	margin-bottom: 15px;
+  width: 44%;
+  margin: 2%;
 }
 
 .comments p {

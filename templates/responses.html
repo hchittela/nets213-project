@@ -10,9 +10,22 @@
 {% else %}
 	{% for response in responses %}
 		<div class="row">
-			{{ response.name }}	
+			<div class = "col-md-6 responses" {% if not response.task1_completed %} style="opacity: 0.3; pointer-events: none;" {% endif %}>
+				<a href="{{ url_for('response', id=response.id) }}">
+					<p>{{ response.name }}</p>
+					<div class="col-md-6">
+						<img src="{{ response.url_1 }}" class="img-thumbnail img-responsive">
+					</div>
+					
+					<div class="col-md-6">
+						<img src="{{ response.url_2 }}" class="img-thumbnail img-responsive">
+					</div>
+				</a>
+			</div>
 		</div>
 	{% endfor %}
 {% endif %}
+
+<br><br>
 
 {% endblock %}

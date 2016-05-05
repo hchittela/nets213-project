@@ -38,14 +38,41 @@ class Challenges(db.Model):
 	num_voters = db.Column(db.Integer)
 	task1_completed = db.Column(db.Boolean, default=False)
 	description = db.Column(db.String(200))
+	votes_1 = db.Column(db.Integer)
+	votes_2 = db.Column(db.Integer)
 
-	def __init__(self, name, url_1, url_2, num_voters, email, description):
+	def __init__(self, name, url_1, url_2, num_voters, email, description, votes_1, votes_2):
 		self.name = name
 		self.url_1 = url_1
 		self.url_2 = url_2
 		self.num_voters = num_voters
 		self.user_email = email
 		self.description = description
+		self.votes_1 = votes_1
+		self.votes_2 = votes_2
+
+class Comments(db.Model):
+	__tablename__ = 'comments'
+	id = db.Column(db.Integer, primary_key=True)
+	challenge_id = db.Column(db.Integer)
+	individual_id = db.Column(db.Integer)
+	img = db.Column(db.Integer)
+	img_url = db.Column(db.String(200))
+	comment = db.Column(db.String(200))
+	score = db.Column(db.Integer)
+	task2_id = db.Column(db.Integer)
+	task2_completed = db.Column(db.Boolean, default=False)
+
+	def __init__(self, name, challenge_id, individual_id, img, img_url, comment):
+		self.name = name
+		self.challenge_id = challenge_id
+		self.individual_id = individual_id
+		self.img = img
+		self.img_url = img_url
+		self.comment = comment
+		self.score = score
+		self.task2_id = task2_id
+		self.task2_completed = task2_completed
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -135,35 +162,35 @@ def create_crowdflower_task1():
 		'cml': '''
 			<p class="description">{{description}}</p>
 			<div class="graphic-divider padded">
-			  <h1>Design 1:</h1>
-			  <img src="{{url_img1}}" alt="Image not found." />
-			  <cml:textarea label="Comments on Design 1:" validates="required" default="What is your opinion of Design 1? What could be improved? Fonts? Colors? Image quality? Please write 1-2 sentences."/>
+				<h1>Design 1:</h1>
+				<img src="{{url_img1}}" alt="Image not found." />
+				<cml:textarea label="Comments on Design 1:" validates="required" default="What is your opinion of Design 1? What could be improved? Fonts? Colors? Image quality? Please write 1-2 sentences."/>
 			</div>
 			<div class="graphic-divider padded">
-			  <h1>Design 2:</h1>
-			  <img src="{{url_img2}}" alt="Image not found." />  
-			  <cml:textarea label="Comments on Design 2:" validates="required" default="What is your opinion of Design 2? What could be improved? Fonts? Colors? Image quality? Please write 1-2 sentences."/>
+				<h1>Design 2:</h1>
+				<img src="{{url_img2}}" alt="Image not found." />  
+				<cml:textarea label="Comments on Design 2:" validates="required" default="What is your opinion of Design 2? What could be improved? Fonts? Colors? Image quality? Please write 1-2 sentences."/>
 			</div>
 			<div class="padded">
-			  <cml:select label="Best Design:" validates="required">
-			    <cml:option label="Design 1" value="img_1"/>
-			    <cml:option label="Design 2" value="img_2" />
-			    <cml:option label="Both Not Found" value="not_found" />
-			  </cml:select>
+				<cml:select label="Best Design:" validates="required">
+					<cml:option label="Design 1" value="img_1"/>
+					<cml:option label="Design 2" value="img_2" />
+					<cml:option label="Both Not Found" value="not_found" />
+				</cml:select>
 			</div>''',
 		'css': '''
 			.padded {
-			  padding: 2%;
+				padding: 2%;
 			}
 			.graphic-divider {
-			  display: inline-block;
-			  vertical-align: top;
-			  width: 46%;
-			  margin-right: -4px;
-			  box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: 46%;
+				margin-right: -4px;
+				box-sizing: border-box;
 			}
 			.description {
-			  font-size: 26px;
+				font-size: 26px;
 			}''',
 	})
 
@@ -238,6 +265,15 @@ def responses():
 	challenges = Challenges.query.filter_by(user_email = current_user.email).order_by(desc(Challenges.id)).all()
 	get_crowdflower_results_task1()
 	return render_template('responses.html', success = get_session_success(), responses = challenges)
+
+@app.route('/response/<int:id>')
+def response(id):
+	if not current_user.is_authenticated:
+		return redirect(url_for('index'))
+	challenge = Challenges.query.get(id)
+	comments_1 = Comments.query.filter_by(challenge_id=id).filter_by(img=1).order_by(desc(Comments.score)).limit(5).all()
+	comments_2 = Comments.query.filter_by(challenge_id=id).filter_by(img=2).order_by(desc(Comments.score)).limit(5).all()
+	return render_template('response.html', success = get_session_success(), response = challenge, comments_1 = comments_1, comments_2=comments_2)
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
