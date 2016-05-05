@@ -1,6 +1,7 @@
 import csv
 import os
 import time
+import json
 import math
 import random
 import requests
@@ -34,10 +35,12 @@ class Challenges(db.Model):
 	user_email = db.Column(db.String(200))
 	url_1 = db.Column(db.String(200))
 	url_2 = db.Column(db.String(200))
-	task1_id = db.Column(db.Integer)
-	num_voters = db.Column(db.Integer)
-	task1_completed = db.Column(db.Boolean, default=False)
 	description = db.Column(db.String(200))
+	num_voters = db.Column(db.Integer)
+	task1_id = db.Column(db.Integer)
+	task1_completed = db.Column(db.Boolean, default=False)
+	votes_1 = db.Column(db.Integer)
+	votes_2 = db.Column(db.Integer)
 
 	def __init__(self, name, url_1, url_2, num_voters, email, description):
 		self.name = name
@@ -46,6 +49,25 @@ class Challenges(db.Model):
 		self.num_voters = num_voters
 		self.user_email = email
 		self.description = description
+
+class Comments(db.Model):
+	__tablename__ = 'comments'
+	id = db.Column(db.Integer, primary_key=True)
+	challenge_id = db.Column(db.Integer)
+	individual_id = db.Column(db.Integer)
+	img = db.Column(db.Integer)
+	img_url = db.Column(db.String(200))
+	comment = db.Column(db.String(500))
+	score = db.Column(db.Float)
+	task2_id = db.Column(db.Integer)
+	task2_completed = db.Column(db.Boolean, default=False)
+
+	def __init__(self, challenge_id, individual_id, img, img_url, comment):
+		self.challenge_id = challenge_id
+		self.individual_id = individual_id
+		self.img = img
+		self.img_url = img_url
+		self.comment = comment
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -99,6 +121,8 @@ def is_valid_url(url):
 	except requests.exceptions.RequestException as e:
 		return False
 
+
+# CROWDFLOWER FUNCTIONS ###########################################################
 def create_crowdflower_task1():
 	data = []
 	# The golden question
@@ -113,6 +137,7 @@ def create_crowdflower_task1():
 	})
 
 	challenges = Challenges.query.filter_by(task1_id = None).all()
+	if len(challenge) < 10: return False
 	for challenge in challenges:
 		data.append({
 			'id': challenge.id,
@@ -172,11 +197,139 @@ def create_crowdflower_task1():
 		challenge.task1_id = job.id
 	db.session.commit()
 
-	# job.launch(5, channels=['cf_internal'])
-	job.launch(5)
+	# job.launch(len(data), channels=['cf_internal'])
+	job.launch(len(data))
+	return True
+
+def create_crowdflower_task2():
+	data = []
+	
+	comments = Comments.query.filter_by(task2_id = None).all()
+	if len(comments) == 0: return False
+	for comment in comments:
+		data.append({
+			'challenge_id': comment.challenge_id,
+			'individual_id': comment.individual_id,
+			'comment': comment.comment,
+			'img_url': comment.img_url,
+			'_golden': '',
+			'better_gold': '',
+			'better_gold_reason': '',
+		})
+
+	job = conn.upload(data)
+	update_result = job.update({
+		'title': 'Evaluate Comments on Graphic Design - %s' % job.id,
+		'included_countries': ['US', 'GB'],
+		'payment_cents': 5,
+		'judgments_per_unit': 5,
+		'units_per_assignment': 25,
+		'instructions': '<h1>Evaluate Comments on Each Picture</h1><p>Help our designers determine which of the comments is the best.</p><p>Bonuses will be awarded for high quality answers and workers will be banned for randomly selecting answers.</p>',
+		'cml': '''
+			<img src="{{img_url}}" alt="Image not found." style="max-height: 350px;"/>
+			<p class="description">
+			  <strong>Comment: </strong>{{comment}}
+			</p>
+			<cml:select label="How helpful is this comment?" validates="required">
+			  <cml:option label="Very Helpful - It is specific, detailed, and give suggestions for improvement." value="5"/>
+			  <cml:option label="Decent - It is specific, detailed, but does not give suggestions for improvement." value="3"/>
+			  <cml:option label="Okay - It relates, but is not specific or detailed." value="2"/>
+			  <cml:option label="Bad - It doesn't relate to the image." value="1"/>
+			  # <cml:option label="Complete Gibberish - These are not even real words." value="0"/>
+			</cml:select>''',
+		'css': '''
+			.description {
+			  font-size: 26px;
+			}''',
+	})
+
+	# Update the task ID for all the rows we just uploaded to CrowdFlower
+	for comment in comments:
+		comment.task2_id = job.id
+	db.session.commit()
+
+	# job.launch(len(data), channels=['cf_internal'])
+	job.launch(len(data))
+	return True
 
 def get_crowdflower_results_task1():
-	return ""
+	has_new_results = False
+	# Get the list of job IDs that have been uploaded but are listed as not complete in the DB
+	posted = Challenges.query.filter(Challenges.task1_id != None).filter(Challenges.task1_completed == 0).group_by(Challenges.task1_id).all()
+	incomplete_ids = []
+	for challenge in posted:
+		incomplete_ids.append(challenge.task1_id)
+	# Get the job if it is now complete
+	for job in conn.jobs():
+		if job.properties['completed'] and job.properties['id'] in incomplete_ids:
+			# Add the comments for this job to the Comments table and also store the data for the QC CrowdFlower task
+			data = []
+			votes = {}
+			individual_id = 0
+			for row in job.download():
+				challenge_id = str(int(row['id']))
+				# Add the first comment
+				comment_img1 = Comments(challenge_id, individual_id, 1, row['url_img1'], row['comments_on_design_1'])
+				db.session.add(comment_img1)
+				individual_id += 1
+				# Add the second comment
+				comment_img2 = Comments(challenge_id, individual_id, 2, row['url_img2'], row['comments_on_design_2'])
+				db.session.add(comment_img2)
+				individual_id += 1
+				# Add the vote to our challenge
+				if challenge_id in votes:
+					if row['best_design'] == "img_1":
+						votes[challenge_id] = {'img_1': votes[challenge_id]['img_1'] + 1, 'img_2': votes[challenge_id]['img_2']}
+					elif row['best_design'] == "img_2":
+						votes[challenge_id] = {'img_1': votes[challenge_id]['img_1'], 'img_2': votes[challenge_id]['img_2'] + 1}
+				else:
+					if row['best_design'] == "img_1":
+						votes[challenge_id] = {'img_1': 1, 'img_2': 0}
+					elif row['best_design'] == "img_2":
+						votes[challenge_id] = {'img_1': 0, 'img_2': 1}
+			# Update the task1_complete field in the Challenges table
+			challenges = Challenges.query.filter_by(task1_id = job.properties['id']).all()
+			for challenge in challenges:
+				challenge.task1_completed = 1
+				challenge.votes_1 = votes[str(int(challenge.id))]['img_1']
+				challenge.votes_2 = votes[str(int(challenge.id))]['img_2']
+			# Commit to the database
+			db.session.commit()
+			has_new_results = True
+	return has_new_results
+
+def get_crowdflower_results_task2():
+	has_new_results = False
+	# Get the list of job IDs that have been uploaded but are listed as not complete in the DB
+	posted = Comments.query.filter(Comments.task2_id != None).filter(Comments.task2_completed == 0).group_by(Comments.task2_id).all()
+	incomplete_ids = []
+	for comment in posted:
+		incomplete_ids.append(comment.task2_id)
+	# Get the job if it is now complete
+	for job in conn.jobs():
+		if job.properties['completed'] and job.properties['id'] in incomplete_ids:
+			# Aggregate the comment scores for the job and save them to the DB
+			votes = {}
+			for row in job.download():
+				challenge_id = str(int(row['challenge_id']))
+				individual_id = str(int(row['individual_id']))
+				if challenge_id in votes:
+					if individual_id in votes[challenge_id]:
+						votes[challenge_id][individual_id] = votes[challenge_id][individual_id].append(int(row['how_helpful_is_this_comment']))
+					else:
+						votes[challenge_id][individual_id] = [int(row['how_helpful_is_this_comment'])]
+				else:
+					votes[challenge_id] = {individual_id: [int(row['how_helpful_is_this_comment'])]}
+			# Update the appropriate fields in the Comments table
+			comments = Comments.query.filter_by(task2_id = job.properties['id']).all()
+			for comment in comments:
+				scores = votes[str(int(comment.challenge_id))][str(int(comment.individual_id))]
+				comment.score = 1.0 * sum(scores) / len(scores)
+				comment.task2_completed = 1
+			# Commit to the database
+			db.session.commit()
+			has_new_results = True
+	return has_new_results
 
 
 # USER LOADER #####################################################################
@@ -236,7 +389,6 @@ def responses():
 	if not current_user.is_authenticated:
 		return redirect(url_for('index'))
 	challenges = Challenges.query.filter_by(user_email = current_user.email).order_by(desc(Challenges.id)).all()
-	get_crowdflower_results_task1()
 	return render_template('responses.html', success = get_session_success(), responses = challenges)
 
 @app.route('/upload', methods=['GET','POST'])
@@ -282,9 +434,6 @@ def upload():
 		new_challenge = Challenges(name, url1, url2, num_voters, current_user.email, description)
 		db.session.add(new_challenge)
 		db.session.commit()
-		if len(Challenges.query.filter_by(task1_id = None).all()) > 10:
-			# Generate Crowd Flower task
-			create_crowdflower_task1()
 		session['success'] = "Success! Your images have been uploaded. The crowd will vote on your designs and we'll get back to you shortly with the results."
 		return redirect(url_for('responses'))
 	return render_template('upload.html')
