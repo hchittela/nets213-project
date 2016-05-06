@@ -1,5 +1,0 @@
-TO-DO:
-
-- Add in Instructions to the first task
-- Responses general page
-- Responses specific page

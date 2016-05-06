@@ -41,15 +41,13 @@ class Challenges(db.Model):
 	votes_1 = db.Column(db.Integer)
 	votes_2 = db.Column(db.Integer)
 
-	def __init__(self, name, url_1, url_2, num_voters, email, description, votes_1, votes_2):
+	def __init__(self, name, url_1, url_2, num_voters, email, description):
 		self.name = name
 		self.url_1 = url_1
 		self.url_2 = url_2
 		self.num_voters = num_voters
 		self.user_email = email
 		self.description = description
-		self.votes_1 = votes_1
-		self.votes_2 = votes_2
 
 class Comments(db.Model):
 	__tablename__ = 'comments'
